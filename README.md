@@ -41,7 +41,54 @@ pause
 
 ![](release/preview/preview-player.png)  
 
-   
+## :smile:拓展  
+<details>
+<summary>关于音乐源</summary>
+
+
+
++ 目前支持网易云和QQ音乐。如有需求，实现接口**nicelee.function.music.source.IMusicAPI**，并在类上加上注释即可。  
+举例：
+```
+@Autoload(source = "音乐源标识", desc = "音乐源描述")  
+那么Main方法里，将ws替换为播放器标识即可。如下：  
+IMusicAPI api = MusicManager.createMusicAPI("音乐源标识");  
+```
+</details>
+
+<details>
+<summary>关于音乐播放器</summary>
+
+
+
++ 目前只是实现了一个简单的播放器。如有需求，实现接口**nicelee.function.music.player.IMusicPlayer**，并在类上加上注释即可。  
+举例：
+```
+@Autoload(source = "播放器标识", desc = "播放器描述")  
+那么Main方法里，将ws替换为播放器标识即可。如下：  
+IMusicPlayer player = MusicManager.createMusicPlayer("播放器标识");   
+```
+</details>  
+
+
+<details>
+<summary>关于更复杂的弹幕逻辑处理</summary>
+
+
+
++ 新增一个**IMsgHandler**并注册即可，返回值代表是否继续处理下一个Handler  
+举例：
+```
+new IMsgHandler() {
+    @Override
+    public boolean handle(Msg msg, User user) {
+        ...
+        return true;
+    }
+} 
+```
+</details>  
+
 ## :smile:其它  
 * **下载地址**: [https://github.com/nICEnnnnnnnLee/DanmuMusicPlayer/releases](https://github.com/nICEnnnnnnnLee/DanmuMusicPlayer/releases)
 * **GitHub**: [https://github.com/nICEnnnnnnnLee/DanmuMusicPlayer](https://github.com/nICEnnnnnnnLee/DanmuMusicPlayer)  
