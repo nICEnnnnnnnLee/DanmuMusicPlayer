@@ -1,0 +1,135 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head charset="utf-8">
+<title>音乐播放器</title>
+</head>
+<body>
+<h1>一个简单的音乐播放器</h1>
+<audio id="music" src="" controls="controls">
+Your browser does not support the audio element.
+</audio>
+
+<script type="text/javascript">
+
+var playList = [];
+var audio = document.getElementById('music');
+var ws_port = 8887;
+
+function GetParam(params, paraName) {
+    var arrPara = params.split("&");
+    var arr;
+    for (var i = 0; i < arrPara.length; i++) {
+        arr = arrPara[i].split("=");
+        if (arr != null && arr[0] == paraName) {
+            return arr[1];
+        }
+    }
+    return "";
+}
+
+function GetUrlParam(paraName) {
+    var url = document.location.toString();
+    var arrObj = url.split("?");
+    if (arrObj.length > 1) {
+        return GetParam(arrObj[1], paraName);
+    }else {
+        return "";
+    }
+}
+
+function PlayNextSong(){
+    if(playList.length > 0){
+        audio.src = playList.shift();
+        console.log('播放下一首' + audio.src);
+        audio.play();
+    }
+}
+
+function Quit(){
+    console.log('Ready to quit');
+    window.opener = null;
+    window.location.href = 'about:blank';
+    window.open('', '_self', '');
+    window.close();
+}
+
+function CommandRun(params) {
+    var command = GetParam(params, 'action');    
+    var temp = GetParam(params, 'param');
+    console.log(temp);
+    var url = decodeURIComponent(temp);
+    if(command == "")
+        return;
+    console.log("收到命令为：" + command); 
+    if(command == "play"){
+        playList.push(url);
+        //如果当前已经播放完毕
+        if(audio.paused && audio.currentTime == 0){
+            PlayNextSong();
+        }
+        audio.play();
+        
+    }else if(command == "playOnce"){
+        console.log("马上播放：" + url); 
+        audio.src = url;
+        audio.play();
+    }else if(command == "pause"){
+        audio.pause();
+    }else if(command == "stop"){
+        audio.pause();
+        audio.currentTime = 0;//重新播放
+    }else if(command == "continue"){
+        audio.play();
+    }else if(command == "playNext"){
+        audio.src = playList.shift();
+        audio.play();
+    }else if(command == "quit"){
+        // 退出网页
+        Quit();
+    }
+}
+
+function WebSocketInit(){
+    if ("WebSocket" in window){
+       console.log("您的浏览器支持 WebSocket!");
+       console.log("ws_port:" + ws_port);
+       // 打开一个 web socket
+       var ws = new WebSocket("ws://localhost:" + ws_port);
+        
+       ws.onopen = function(){
+          // Web Socket 已连接上，使用 send() 方法发送数据
+          ws.send("test");
+          //console.log("数据发送中...");
+       };
+        
+       ws.onmessage = function (evt) { 
+          var received_msg = evt.data;
+          //console.log("数据已接收...");
+          //console.log(received_msg);
+          CommandRun(received_msg);
+       };
+        
+       ws.onclose = function(){ 
+          // 关闭 websocket
+          console.log("连接已关闭..."); 
+       };
+    }else {
+       // 浏览器不支持 WebSocket
+       alert("您的浏览器不支持 WebSocket!");
+    }
+}
+// 播放完毕自动下一首
+audio.addEventListener("ended",function(){
+    PlayNextSong();
+},false);
+// 播放错误自动下一首
+audio.addEventListener("error",function(){
+    PlayNextSong();
+},false);
+
+var tmp = GetUrlParam('port');
+ws_port = tmp == "" ? ws_port : tmp;
+WebSocketInit();
+</script>
+</body>
+</html>
