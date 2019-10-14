@@ -4,7 +4,7 @@
 ![测试版本64位Win10系统, jre 1.8.0_101](https://img.shields.io/badge/TestPass-Win10%20x64__java__1.8.0__101-green.svg)
 ![开源协议Apache2.0](https://img.shields.io/badge/license-apache--2.0-green.svg)  
 ![当前版本](https://img.shields.io/github/release/nICEnnnnnnnLee/DanmuMusicPlayer.svg?style=flat-square)
-![最近更新](https://img.shields.io/github/last-commit/nICEnnnnnnnLee/BilibiliDown.svg?style=flat-square&color=FF9900)
+![最近更新](https://img.shields.io/github/last-commit/nICEnnnnnnnLee/DanmuMusicPlayer.svg?style=flat-square&color=FF9900)
 
 弹幕点歌姬  
 ===============================  
@@ -37,8 +37,7 @@ java -Dfile.encoding=utf-8 -jar DanmuFkMusic.jar %danmukuSource% %roomId% %music
 pause
 ```
 + 预览  
-![](release/preview/preview-core.png)  
-
+![](release/preview/preview-core.png)
 ![](release/preview/preview-player.png)  
 
 ## :smile:拓展  
