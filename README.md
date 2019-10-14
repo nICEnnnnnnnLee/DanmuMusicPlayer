@@ -96,7 +96,7 @@ new IMsgHandler() {
 ## :smile:第三方库使用声明  
 * 使用[JSON.org](https://github.com/stleary/JSON-java)库做简单的Json解析[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/stleary/JSON-java/blob/master/LICENSE)
 * 使用[Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket)进行ws连接[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE)
-
+* 网易云音乐加密的解析搬运了[这个](https://github.com/guanyuespace/Music163/blob/master/src/guanyue.util/ParametersUtil.java)
 
 ## :smile:LICENSE 
 ```
