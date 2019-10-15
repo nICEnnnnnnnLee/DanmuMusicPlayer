@@ -3,13 +3,12 @@ package nicelee.function.danmuku.core.impl;
 import java.net.URI;
 import java.util.List;
 
-import nicelee.common.annotation.Autoload;
 import nicelee.common.util.TrustAllCertSSLUtil;
 import nicelee.function.danmuku.core.IDanmuku;
 import nicelee.function.danmuku.handler.IMsgHandler;
 import nicelee.function.danmuku.handler.MsgHandler;
 
-@Autoload(source = "douyuWs")
+//@Autoload(source = "douyuWs" desc="// 废弃")
 public class DouyuDanmukuWs implements IDanmuku, Runnable {
 
 	List<IMsgHandler> handlers;

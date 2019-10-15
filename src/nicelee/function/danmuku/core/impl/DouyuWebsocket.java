@@ -13,6 +13,7 @@ import nicelee.function.danmuku.domain.Msg;
 import nicelee.function.danmuku.domain.User;
 import nicelee.function.danmuku.handler.IMsgHandler;
 
+// 废弃
 public class DouyuWebsocket extends WebSocketClient {
 
 	long roomId;

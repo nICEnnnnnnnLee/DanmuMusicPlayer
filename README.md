@@ -16,7 +16,7 @@
 | Key  | 是否支持 |
 | ------------- | ------------- |  
 | bili  | 是 | 
-| douyu  | 出了点小问题，施工中 | 
+| douyu  | 是 | 
 
 + 音乐源支持情况  
 
@@ -26,10 +26,10 @@
 | QQ音乐  | 是 | 
 
 ## :smile:使用方法  
-+ Windows下调用`run.bat`即可  
++ Windows下调用`run.bat`即可，其它java环境可参考命令行调用  
 ```
-set danmukuSource="bili"
 set /p musicSource="请选择音乐源(qq/163):"
+set /p danmukuSource="请输入弹幕源(douyu/bili)："
 set /p roomId="请输入房间号："
 set /p level="请输入允许点歌的粉丝牌最小等级："
 
@@ -42,6 +42,37 @@ pause
 
 ## :smile:拓展  
 <details>
+<summary>关于弹幕源</summary>
+
+
+
++ 目前支持斗鱼和哔哩哔哩。  
+如有需求，实现接口**nicelee.function.danmuku.core.IDanmuku**，并在类上加上注释即可。  
+举例：
+```
+@Autoload(source = "弹幕源标识", desc = "弹幕源描述")  
+那么Main方法里，将danmuSource替换为播放器标识即可。如下：  
+IDanmuku danmu = DanmukuManager.createDanmuku("弹幕源标识", roomId); 
+```
+以下为`IDanmuku`接口：
+```
+public interface IDanmuku {
+	// 请实现静态实例化create方法
+	//public static IDanmuku create(long roomId) 
+	
+	public boolean start();
+	
+	public void stop();
+	
+	public int status();
+	
+	public List<IMsgHandler> addMsgHandler(IMsgHandler handler);
+}
+```
+</details>
+
+
+<details>
 <summary>关于音乐源</summary>
 
 
@@ -50,7 +81,7 @@ pause
 举例：
 ```
 @Autoload(source = "音乐源标识", desc = "音乐源描述")  
-那么Main方法里，将ws替换为播放器标识即可。如下：  
+那么Main方法里，将musicSource替换为播放器标识即可。如下：  
 IMusicAPI api = MusicManager.createMusicAPI("音乐源标识");  
 ```
 </details>
@@ -60,7 +91,8 @@ IMusicAPI api = MusicManager.createMusicAPI("音乐源标识");
 
 
 
-+ 目前只是实现了一个简单的播放器。如有需求，实现接口**nicelee.function.music.player.IMusicPlayer**，并在类上加上注释即可。  
++ 目前只是实现了一个简单的播放器。  
+如有需求，实现接口**nicelee.function.music.player.IMusicPlayer**，并在类上加上注释即可。  
 举例：
 ```
 @Autoload(source = "播放器标识", desc = "播放器描述")  

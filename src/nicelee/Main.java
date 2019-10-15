@@ -20,7 +20,9 @@ import nicelee.function.music.source.IMusicAPI;
 public class Main {
 
 	public static void main(String[] args) {
-		// args = new String[] {"bili", "163", "3096485"};
+//		args = new String[] {"douyu", "233233","163",  "0"};
+//		args = new String[] {"bili", "6","163",  "0"};
+		
 		String danmuSource = "bili";// Support bili. Plan to Support douyu
 		String musicSource = "163";// Support qq 163
 		long roomId = 0;
