@@ -13,10 +13,10 @@
 
 + 直播间弹幕监听支持情况  
 
-| Key  | 是否支持 |
-| ------------- | ------------- |  
-| bili  | 是 | 
-| douyu  | 是 | 
+| Key  | 是否支持 |  最后测试时间 |  
+| ------------- | ------------- | ------------- |  
+| bili  | 是 | 2020/08/05 |  
+| douyu  | 是 |  2020/08/05 |  
 
 + 音乐源支持情况  
 
@@ -126,8 +126,9 @@ new IMsgHandler() {
 * **更新历史**: <https://github.com/nICEnnnnnnnLee/DanmuMusicPlayer/blob/master/UPDATE.md>
 
 ## :smile:第三方库使用声明  
-* 使用[JSON.org](https://github.com/stleary/JSON-java)库做简单的Json解析[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/stleary/JSON-java/blob/master/LICENSE)
+* 使用[JSON.org](https://github.com/stleary/JSON-java)库做简单的Json解析[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/stleary/JSON-java/blob/master/LICENSE)  
 * 使用[Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket)进行ws连接[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE)
+    * 对该库做了些改动，以解决斗鱼弹幕连接一分钟后断开的问题，详见<https://github.com/nICEnnnnnnnLee/Java-WebSocket>  
 * 网易云音乐加密的解析搬运了[这个](https://github.com/guanyuespace/Music163/blob/master/src/guanyue.util/ParametersUtil.java)
 
 ## :smile:LICENSE 
