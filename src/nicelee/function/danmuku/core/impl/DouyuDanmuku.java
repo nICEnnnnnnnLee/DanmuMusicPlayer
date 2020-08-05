@@ -1,6 +1,6 @@
 package nicelee.function.danmuku.core.impl;
 
-import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import nicelee.common.annotation.Autoload;
 import nicelee.common.util.HttpRequestUtil;
+import nicelee.common.util.TrustAllCertSSLUtil;
 import nicelee.function.danmuku.core.IDanmuku;
 import nicelee.function.danmuku.handler.IMsgHandler;
 import nicelee.function.danmuku.handler.MsgHandler;
@@ -17,13 +18,13 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 
 	List<IMsgHandler> handlers;
 	long roomid;
-	long realRoomid;
-	DouyuSocket douyuSocket;
+	long realRoomId;
+	DouyuWebsocket douyuSocket;
+	DouyuLoginWebsocket douyuLoginSocket;
 	Thread hearbeatThread;
 	Thread msgHandlerThread;
 	volatile boolean running;
 
-	final static Pattern realRoomIDPattern = Pattern.compile("\\$ROOM\\.room_id ?=([0-9]+)");
 	private DouyuDanmuku() {
 	}
 
@@ -36,7 +37,6 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 		handlers = MsgHandler.getHandlers("douyu");
 	}
 
-	
 	public static IDanmuku create(long roomid) {
 		DouyuDanmuku danmuku = new DouyuDanmuku(roomid);
 		return danmuku;
@@ -46,21 +46,25 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 	public boolean start() {
 		try {
 			HttpRequestUtil util = new HttpRequestUtil();
-			HashMap<String, String> headers = new HashMap<>();
-			headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-			headers.put("Accept-Encoding", "gzip, deflate, br");
-			headers.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
-			headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0");
-			String html = util.getContent("https://www.douyu.com/" + roomid, new HashMap<>());
-			//System.out.println(html);
-			Matcher matcher = realRoomIDPattern.matcher(html);
+			String basicInfoUrl = String.format("https://www.douyu.com/%s", roomid);
+			String html = util.getContent(basicInfoUrl, new HashMap<>());
+			// System.out.println(html);
+			Pattern pRoomId = Pattern.compile("\\$ROOM.room_id ?= ?([0-9]+);");
+			Matcher matcher = pRoomId.matcher(html);
 			matcher.find();
-			realRoomid = Long.parseLong(matcher.group(1));
-			douyuSocket = new DouyuSocket(roomid, realRoomid, handlers);
-			douyuSocket.loginAndJoinGroup();
-			msgHandlerThread = new Thread(douyuSocket);
-			msgHandlerThread.start();
+			realRoomId = Long.parseLong(matcher.group(1));
+			
+			URI url = new URI("wss://danmuproxy.douyu.com:8501");
+			douyuSocket = new DouyuWebsocket(url, roomid, realRoomId, handlers, this);
+			douyuSocket.setSocketFactory(TrustAllCertSSLUtil.getFactory());
+			douyuSocket.connectBlocking();
 			hearbeatThread.start();
+			
+//			URI urlLogin = new URI("wss://wsproxy.douyu.com:6671");
+//			douyuLoginSocket = new DouyuLoginWebsocket(urlLogin, roomid, realRoomId, this);
+//			douyuLoginSocket.setSocketFactory(TrustAllCertSSLUtil.getFactory());
+//			douyuLoginSocket.connectBlocking();
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,11 +75,6 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 
 	@Override
 	public void stop() {
-		try {
-			douyuSocket.logout();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		hearbeatThread.interrupt();
 	}
 
@@ -91,8 +90,9 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 	public void run() {
 		while (running) {
 			try {
-				douyuSocket.heartBeat();
 				Thread.sleep(45000);
+				douyuSocket.heartBeat();
+				//douyuLoginSocket.heartBeat();
 				//System.out.println(roomid + " - douyu发送心跳包成功");
 			} catch (Exception e) {
 				//e.printStackTrace();
@@ -100,12 +100,34 @@ public class DouyuDanmuku implements IDanmuku, Runnable {
 			}
 		}
 		System.out.println(roomid + " - douyu心跳线程结束");
+//		try {
+//			douyuLoginSocket.closeBlocking();
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		try {
+			douyuSocket.closeBlocking();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public List<IMsgHandler> addMsgHandler(IMsgHandler handler) {
 		handlers.add(handler);
 		return handlers;
+	}
+
+	public DouyuWebsocket getDouyuSocket() {
+		return douyuSocket;
+	}
+
+	public DouyuLoginWebsocket getDouyuLoginSocket() {
+		return douyuLoginSocket;
+	}
+
+	public Thread getHearbeatThread() {
+		return hearbeatThread;
 	}
 
 }
