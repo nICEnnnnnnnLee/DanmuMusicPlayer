@@ -200,9 +200,9 @@ public class NetEaseEncryptUtil {
 	}
 
 	private static String getRandom(int i) {// 随机16字符即可
-		StringBuilder sb = new StringBuilder(16);
+		StringBuilder sb = new StringBuilder(i);
 		String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		for (int j = 0; j < 16; j++) {
+		for (int j = 0; j < i; j++) {
 			int m = (int) (Math.random() * alphabet.length());
 			sb.append(alphabet.charAt(m));
 		}
