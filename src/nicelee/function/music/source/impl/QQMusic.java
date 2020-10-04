@@ -74,9 +74,9 @@ public class QQMusic implements IMusicAPI {
 	public List<Music> searchSimilar(String keyWord, int pageSize, int pn) {
 		List<Music> list = searchWithLink(keyWord, pageSize, pn);
 		for(int i = list.size() -1; i>=0; i--) {
+			//list.get(i).print();
 			if(list.get(i).url == null)
 				list.remove(i);
-			list.get(i).print();
 		}
 		return list;
 	}
